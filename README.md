@@ -1,1 +1,17 @@
-IyBoZXJtZXMtYWdlbnQtZ2F0ZXdheS1yZXN0YXJ0LXJlY292ZXJ5CgpBIEhlcm1lcyBBZ2VudCBza2lsbDogc2FmZWx5IHJlbGF1bmNoaW5nIHRoZSBIZXJtZXMgQWdlbnQgZ2F0ZXdheSBwcm9jZXNzIGZyb20gYSBzZXNzaW9uIGl0IHNlcnZlcywgd2l0aG91dCBpdCBzdGF5aW5nIGRvd24uCgojIyBUaGUgcHJvYmxlbQpgaGVybWVzIGdhdGV3YXkgcmVzdGFydGAgcnVuIGZyb20gaW5zaWRlIGEgc2VydmVkIHNlc3Npb24gaXMgYSBzZWxmLWludGVycnVwdDogdGhlIG9yZGVyaW5nIHByb2Nlc3MgaXMgYSBjaGlsZCBvZiB0aGUgcHJvY2VzcyBiZWluZyBjeWNsZWQgYW5kIGRpZXMgd2l0aCBpdC4gVGhlIHNlcnZpY2UgaGFsZi1yZXN0YXJ0cywgbm9ib2R5IGZpbmlzaGVzIGJyaW5naW5nIGl0IGJhY2ssIGFuZCB5b3VyIGFnZW50IGdvZXMgc2lsZW50IChPcnBoYW4gcmVjb3Zlcnk6IGVmZmVjdCBVTktOT1dOKS4KCiMjIFRoZSBmaXgKT3JkZXIgYSAqKmRldGFjaGVkKiogcmVsYXVuY2ggd2hvc2Ugb3duIHNjcmlwdCBjYXJyaWVzIHRoZSByZWNvdmVyeSAoY3ljbGUsIHdhaXQsIGVuc3VyZS11cCksIHRoZW4gc3RhdHVzLXZlcmlmeSBmcm9tIHRoZSBzZXNzaW9uLiBDb3B5LXBhc3RlIG9uZS1saW5lcnMgZm9yIFdpbmRvd3MgKFN0YXJ0LVByb2Nlc3MpIGFuZCBMaW51eC9tYWNPUyAoc3lzdGVtY3RsIC0tdXNlcikgYXJlIGluIFNLSUxMLm1kLgoKIyMgSW5zdGFsbCAoYXMgYSBIZXJtZXMgc2tpbGwpCmBgYGJhc2gKZ2l0IGNsb25lIGh0dHBzOi8vZ2l0aHViLmNvbS9sZW9uaW5pbmRlci9oZXJtZXMtYWdlbnQtZ2F0ZXdheS1yZXN0YXJ0LXJlY292ZXJ5IH4vLmhlcm1lcy9za2lsbHMvaGVybWVzLWFnZW50LWdhdGV3YXktcmVzdGFydC1yZWNvdmVyeQpgYGAKKExvY2F0ZSB5b3VycyB3aXRoOiBoZXJtZXMgcHJvZmlsZSBzaG93IGRlZmF1bHQpCgpNSVQgbGljZW5zZS4K
+# hermes-agent-gateway-restart-recovery
+
+A Hermes Agent skill: safely relaunching the Hermes Agent gateway process from a session it serves, without it staying down.
+
+## The problem
+`hermes gateway restart` run from inside a served session is a self-interrupt: the ordering process is a child of the process being cycled and dies with it. The service half-restarts, nobody finishes bringing it back, and your agent goes silent (Orphan recovery: effect UNKNOWN).
+
+## The fix
+Order a **detached** relaunch whose own script carries the recovery (cycle, wait, ensure-up), then status-verify from the session. Copy-paste one-liners for Windows (Start-Process) and Linux/macOS (systemctl --user) are in SKILL.md.
+
+## Install (as a Hermes skill)
+```bash
+git clone https://github.com/leonininder/hermes-agent-gateway-restart-recovery ~/.hermes/skills/hermes-agent-gateway-restart-recovery
+```
+(Locate yours with: hermes profile show default)
+
+MIT license.
